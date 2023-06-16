@@ -40,6 +40,7 @@ Decoder::Decoder(gel::Image *image): _image(image) {
 ///
 Decoder::~Decoder() { }
 
+
 /**
  * @fn Inst *Decoder::decode(gel::address_t a);
  * Decode the instruction at address a.

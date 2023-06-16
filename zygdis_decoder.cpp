@@ -29,80 +29,6 @@
 
 namespace otawa { namespace x86 {
 
-using namespace elm;
-using namespace otawa;
-using hard::RegBank;
-using hard::Register;
-
-// 8-bit
-Register AL(Register::Make("AL").kind(Register::INT).size(8));
-Register AH(Register::Make("AH").kind(Register::INT).size(8));
-Register BL(Register::Make("BL").kind(Register::INT).size(8));
-Register BH(Register::Make("BH").kind(Register::INT).size(8));
-Register CL(Register::Make("CL").kind(Register::INT).size(8));
-Register CH(Register::Make("CH").kind(Register::INT).size(8));
-Register DL(Register::Make("DL").kind(Register::INT).size(8));
-Register DH(Register::Make("DH").kind(Register::INT).size(8));
-
-// 16-bit
-Register AX(Register::Make("AX").kind(Register::INT).size(16));
-Register BX(Register::Make("BX").kind(Register::INT).size(16));
-Register CX(Register::Make("CX").kind(Register::INT).size(16));
-Register DX(Register::Make("DX").kind(Register::INT).size(16));
-
-// 32-bit
-Register EAX(Register::Make("EAX").kind(Register::INT).size(32));
-Register EBX(Register::Make("EBX").kind(Register::INT).size(32));
-Register ECX(Register::Make("ECX").kind(Register::INT).size(32));
-Register EDX(Register::Make("EDX").kind(Register::INT).size(32));
-
-// address registers
-Register CS(Register::Make("CS").kind(Register::ADDR).size(32));
-Register DS(Register::Make("DS").kind(Register::ADDR).size(32));
-Register SS(Register::Make("SS").kind(Register::ADDR).size(32));
-Register ES(Register::Make("DS").kind(Register::ADDR).size(32));
-
-Register SP(Register::Make("SP").kind(Register::ADDR).size(16));
-Register BP(Register::Make("BS").kind(Register::ADDR).size(16));
-Register ESP(Register::Make("ESP").kind(Register::ADDR).size(32));
-Register EBP(Register::Make("EBP").kind(Register::ADDR).size(32));
-Register SI(Register::Make("SI").kind(Register::ADDR).size(16));
-Register DI(Register::Make("DI").kind(Register::ADDR).size(16));
-Register ESI(Register::Make("ESI").kind(Register::ADDR).size(32));
-Register EDI(Register::Make("EDI").kind(Register::ADDR).size(32));
-
-// status registers
-Register EFLAGS(Register::Make("EFLAGS").kind(Register::BITS).size(16));
-// 11 10 09 08 07 06 05 04 03 02 01 00
-// OF DF IF TF SF ZF    AF    PF    CF
-Register IP(Register::Make("IP").kind(Register::ADDR).size(16));
-Register EIP(Register::Make("EIP").kind(Register::ADDR).size(32));
-
-// platform definition
-RegBank DATA(RegBank::Make("DATA")
-	.add(EAX).add(EBX).add(ECX).add(EDX)		.add(AX).add(BX).add(CX).add(DX)
-	.add(AL).add(AH).add(BL).add(BH).add(CL).add(CH).add(DL).add(DH)
-);
-
-RegBank ADDRESS(RegBank::Make("ADDRESS")
-	.add(ESP).add(EBP).add(ESI).add(EDI)
-	.add(SP).add(BP).add(SI).add(DI)
-	.add(CS).add(DS).add(SS).add(ES)
-);
-
-RegBank STATUS(RegBank::Make("INTERN")
-	.add(EFLAGS)
-	.add(IP)
-	.add(EIP));
-
-
-// platform definition
-const RegBank *banks[] = { &DATA, &ADDRESS, &STATUS };
-Platform::Platform(): hard::Platform(hard::Platform::Identification("x86")) {
-	setBanks(banks_t(3, otawa::x86::banks));
-}
-
-#if 0
 // Decoder class
 class Decoder: public otawa::Decoder {
 public:
@@ -328,28 +254,10 @@ private:
 	ZydisFormatter zform;
 	ZydisDecodedInstruction zi;
 };
-#endif
 
-// Plug-ins defintions
-class Loader: public otawa::DefaultLoader {
-public:
-	Loader(void): otawa::DefaultLoader(make("x86", OTAWA_LOADER_VERSION).version(1.0).alias("elf_23")) {
-	}
-	CString getName(void) const { return "x86"; }
-};
+otawa::Decoder *makeDecoder(gel::Image *i) {
+	return new Decoder(i);
+}
 
-class DecoderPlugin: public otawa::DecoderPlugin {
-public:
-	DecoderPlugin(): otawa::DecoderPlugin("x86", OTAWA_DECODER_NAME, OTAWA_DECODER_NAME) {}
-	
-	Decoder *decode(gel::Image *image) override {
-		return makeDecoder(image);
-	}
-};
+}}	// otawa::x86
 
-} }	// otawa::x86
-
-otawa::x86::Loader otawa_x86_loader;
-ELM_PLUGIN(otawa_x86_loader, OTAWA_LOADER_HOOK);
-otawa::x86::DecoderPlugin otawa_x86_decoder;
-ELM_PLUGIN(otawa_x86_decoder, OTAWA_DECODER_HOOK);

@@ -94,6 +94,91 @@ public:
 		return decoder->instSize();
 	}
 
+	void get(Address at, Address &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		t::uint32 a;
+		b.get(at.offset() - s->baseAddress(), a);
+		val = a;
+	}
+	
+	void get(Address at, char *buf, int size) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		cstring cs;
+		b.get(at.offset() - s->baseAddress(), cs);
+		ASSERT(cs.length() >= size);
+		for(const char *p = cs.chars(); *p != '\0'; p++)
+			*buf++ = *p++;
+		*buf++ = '\0';
+	}
+	
+	void get(Address at, string &str) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		string cs;
+		b.get(at.offset() - s->baseAddress(), cs);		
+	}
+
+	void get(Address at, t::int8 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
+	void get(Address at, t::uint8 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
+	void get(Address at, t::int16 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
+	void get(Address at, t::uint16 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
+	void get(Address at, t::int32 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
+	void get(Address at, t::uint32 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
+	void get(Address at, t::int64 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
+	void get(Address at, t::uint64 &val) override {
+		auto s = image->at(at.offset());
+		ASSERT(s != nullptr);
+		auto b = s->buffer();
+		b.get(at.offset() - s->baseAddress(), val);
+	}
+
 	File *loadFile(elm::CString path) override {
 		if(image != nullptr)
 			throw otawa::Exception("cannot load additional executable file!");

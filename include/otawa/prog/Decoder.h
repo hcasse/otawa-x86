@@ -23,6 +23,7 @@
 
 #include <elm/types.h>
 #include <elm/sys/Plugin.h>
+#include <otawa/base.h>
 #include <gel++.h>
 
 namespace otawa {
